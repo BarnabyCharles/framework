@@ -19,8 +19,8 @@ func RegisterGRPC(port int, register func(s *grpc.Server)) error {
 	// 反射查询
 	reflection.Register(s)
 	register(s)
-	err = s.Serve(listen)
-	if err != nil {
+
+	if err := s.Serve(listen); err != nil {
 		log.Panicf("failed to server%v", err)
 		return err
 	}
