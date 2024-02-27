@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/ghodss/yaml"
@@ -19,13 +20,20 @@ func InitMysql() error {
 	if err != nil {
 		return err
 	}
-	var mysqConfig config.MysqlConfig
+	var mysqConfig config.AppConfig
 	err = yaml.Unmarshal([]byte(nacos), &mysqConfig)
 	if err != nil {
 		return errors.New("将yaml文件转换为结构体格式失败！" + err.Error())
 	}
 	log.Println()
-	DB, err = gorm.Open(mysql.Open("root:yuling@tcp(127.0.0.1:3306)/zg5?parseTime=true"), &gorm.Config{})
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true",
+		mysqConfig.Mysql.Username,
+		mysqConfig.Mysql.Password,
+		mysqConfig.Mysql.Host,
+		mysqConfig.Mysql.Port,
+		mysqConfig.Mysql.Database,
+	)
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
