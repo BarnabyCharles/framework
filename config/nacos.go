@@ -2,13 +2,17 @@ package config
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/nacos-group/nacos-sdk-go/clients"
+	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-func InitNacos(dataid string, group string) (string, error) {
+var Client config_client.IConfigClient
+
+func ClientNacos() error {
 	//create ServerConfig
 	sc := []constant.ServerConfig{
 		*constant.NewServerConfig("127.0.0.1", 8848, constant.WithContextPath("/nacos")),
@@ -24,18 +28,36 @@ func InitNacos(dataid string, group string) (string, error) {
 		constant.WithLogLevel("debug"),
 	)
 	// create config client
-	client, err := clients.NewConfigClient(
+	var err error
+	Client, err = clients.NewConfigClient(
 		vo.NacosClientParam{
 			ClientConfig:  &cc,
 			ServerConfigs: sc,
 		},
 	)
 	if err != nil {
-		return "", errors.New("创建nacos连接客户端失败！" + err.Error())
+		return errors.New("创建nacos连接客户端失败！" + err.Error())
 	}
-	content, err := client.GetConfig(vo.ConfigParam{
-		DataId: dataid,
+	return nil
+}
+
+func GetNacosConfig(SeverName string, group string) (string, error) {
+
+	content, err := Client.GetConfig(vo.ConfigParam{
+		DataId: SeverName,
 		Group:  group,
 	})
+	if err != nil {
+		return "", nil
+	}
+	err = Client.ListenConfig(vo.ConfigParam{
+		DataId: SeverName,
+		Group:  group,
+		OnChange: func(namespace, group, dataId, data string) {
+			content = data
+			fmt.Println("config changed group:" + group + ", dataId:" + dataId + ", content:" + data)
+		},
+	})
+
 	return content, nil
 }

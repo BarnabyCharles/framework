@@ -1,7 +1,11 @@
 package config
 
 type AppConfig struct {
-	App   string      `yaml:"App"`
+	App string `yaml:"App"`
+
+	Host string `json:"Host" yaml:"Host"`
+	Port int    `json:"Port" yaml:"Port"`
+
 	Mysql MysqlConfig `yaml:"Mysql"`
 }
 

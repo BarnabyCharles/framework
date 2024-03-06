@@ -14,18 +14,18 @@ import (
 
 var DB *gorm.DB
 
-func InitMysql() error {
-	var err error
-	nacos, err := config.InitNacos("user.day05", "DEFAULT_GROUP")
+func InitMysql(serverName string) error {
+
+	nacos, err := config.GetNacosConfig(serverName, "DEFAULT_GROUP")
 	if err != nil {
 		return err
 	}
 	var mysqConfig config.AppConfig
 	err = yaml.Unmarshal([]byte(nacos), &mysqConfig)
+	log.Println("22222222222222222", mysqConfig)
 	if err != nil {
 		return errors.New("将yaml文件转换为结构体格式失败！" + err.Error())
 	}
-	log.Println()
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true",
 		mysqConfig.Mysql.Username,
 		mysqConfig.Mysql.Password,
@@ -33,10 +33,13 @@ func InitMysql() error {
 		mysqConfig.Mysql.Port,
 		mysqConfig.Mysql.Database,
 	)
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {
 		panic(err)
 	}
+
+	DB = db
+
 	return err
 }
 
