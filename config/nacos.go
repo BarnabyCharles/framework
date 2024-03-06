@@ -15,7 +15,7 @@ var Client config_client.IConfigClient
 func ClientNacos() error {
 	//create ServerConfig
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("10.2.171.84", 8848, constant.WithContextPath("/nacos")),
+		*constant.NewServerConfig("172.20.10.8", 8848, constant.WithContextPath("/nacos")),
 	}
 
 	//create ClientConfig
