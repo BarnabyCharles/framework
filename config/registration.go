@@ -15,7 +15,7 @@ func RegisterServer() error {
 	// 配置Nacos服务器地址和命名空间等信息
 	sc := []constant.ServerConfig{
 		{
-			IpAddr: "127.0.0.1",
+			IpAddr: "10.2.171.84",
 			Port:   8848,
 		},
 	}
