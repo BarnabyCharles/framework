@@ -12,10 +12,10 @@ func Init(serverName string, str ...string) error {
 	if err != nil {
 		return err
 	}
-	err=config.RegisterServer()
-	if err != nil {
-		return err
-	}
+	//err=config.RegisterServer()
+	//if err != nil {
+	//	return err
+	//}
 	//err = consul.ConsulClient()
 	//
 	//if err != nil {
