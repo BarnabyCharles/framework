@@ -16,3 +16,8 @@ type MysqlConfig struct {
 	Port     int    `yaml:"port"`
 	Database string `yaml:"database"`
 }
+
+type RedisConfig struct {
+	Host string `json:"host" yaml:"host"`
+	Port int    `json:"port" yaml:"port"`
+}

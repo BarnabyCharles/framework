@@ -3,7 +3,6 @@ package app
 import (
 	"github.com/BarnabyCharles/framework/config"
 	"github.com/BarnabyCharles/framework/databases/mysql"
-	"github.com/BarnabyCharles/framework/databases/redis"
 )
 
 func Init(serverName string, str ...string) error {
@@ -21,7 +20,7 @@ func Init(serverName string, str ...string) error {
 	//if err != nil {
 	//	return err
 	//}
-	redis.InitRedis()
+	//redis.InitRedis()
 	for _, val := range str {
 		switch val {
 		case "mysql":
