@@ -12,15 +12,15 @@ import (
 
 var Client config_client.IConfigClient
 
-func ClientNacos() error {
+func ClientNacos(NamespaceId string, host string, port int) error {
 	//create ServerConfig
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("10.2.171.84", 8848, constant.WithContextPath("/nacos")),
+		*constant.NewServerConfig(host, uint64(port), constant.WithContextPath("/nacos")),
 	}
 
 	//create ClientConfig
 	cc := *constant.NewClientConfig(
-		constant.WithNamespaceId(""),
+		constant.WithNamespaceId(NamespaceId),
 		constant.WithTimeoutMs(5000),
 		constant.WithNotLoadCacheAtStart(true),
 		constant.WithLogDir("/tmp/nacos/log"),
