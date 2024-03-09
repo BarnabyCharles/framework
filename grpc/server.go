@@ -10,13 +10,15 @@ import (
 
 	"github.com/ghodss/yaml"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 
 	"github.com/BarnabyCharles/framework/config"
+	"github.com/BarnabyCharles/framework/consul"
 )
 
 func RegisterGRPC(serverName string, register func(s *grpc.Server), cert, key string) error {
-
 	nacosConfig, err := config.GetNacosConfig(serverName, "DEFAULT_GROUP")
 	if err != nil {
 		return err
@@ -26,7 +28,12 @@ func RegisterGRPC(serverName string, register func(s *grpc.Server), cert, key st
 	if err != nil {
 		return err
 	}
-
+	log.Println("grpc端口==================", AppConfig)
+	port, err := GetFreePort()
+	if err != nil {
+		return err
+	}
+	AppConfig.Port = port
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", AppConfig.Host, AppConfig.Port))
 	if err != nil {
 		log.Panicf("failed to listen%v", err)
@@ -37,14 +44,14 @@ func RegisterGRPC(serverName string, register func(s *grpc.Server), cert, key st
 	// 反射查询
 	reflection.Register(s)
 	register(s)
+	consulServerName := AppConfig.App
+	err = consul.AgentService(consulServerName, AppConfig.Host, AppConfig.Port)
+	if err != nil {
+		return err
+	}
 
-	//err = consul.AgentService(AppConfig.Host, AppConfig.Port)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//// 注册健康检测
-	//grpc_health_v1.RegisterHealthServer(s, health.NewServer())
+	// 注册健康检测
+	grpc_health_v1.RegisterHealthServer(s, health.NewServer())
 
 	log.Println("server", listen.Addr())
 	go func() {
@@ -67,4 +74,16 @@ func RegisterGRPC(serverName string, register func(s *grpc.Server), cert, key st
 	//s.GracefulStop()
 
 	return err
+}
+func GetFreePort() (int, error) {
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
+	}
+	l, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
+	}
+	defer l.Close()
+	return l.Addr().(*net.TCPAddr).Port, nil
 }

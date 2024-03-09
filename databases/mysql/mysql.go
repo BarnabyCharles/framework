@@ -22,10 +22,11 @@ func InitMysql(serverName string) error {
 	}
 	var mysqConfig config.AppConfig
 	err = yaml.Unmarshal([]byte(nacos), &mysqConfig)
-	log.Println("22222222222222222", mysqConfig)
+
 	if err != nil {
 		return errors.New("将yaml文件转换为结构体格式失败！" + err.Error())
 	}
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true",
 		mysqConfig.Mysql.Username,
 		mysqConfig.Mysql.Password,
@@ -33,9 +34,10 @@ func InitMysql(serverName string) error {
 		mysqConfig.Mysql.Port,
 		mysqConfig.Mysql.Database,
 	)
+	log.Println("数据库连接=====================", dsn)
 	db, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {
-		panic(err)
+		return errors.New("连接数据库失败！" + err.Error())
 	}
 
 	DB = db

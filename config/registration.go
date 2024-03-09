@@ -82,8 +82,6 @@ func GetNacosServerGrpc(serviceName string) (string, int, error) {
 		port = int(val.Port)
 	}
 
-	log.Println("dsjklsdfjjfdskjkldsf;dsfjkl;", host, port)
-
 	return host, port, nil
 }
 
