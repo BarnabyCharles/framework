@@ -9,11 +9,15 @@ import (
 
 func Init(fileName, filePath string, str ...string) error {
 	var err error
-	host, port, serverName, NamespaceId, err := config.InitViper(fileName, filePath)
+	nacoscfg, err := config.InitViper(fileName, filePath)
 	if err != nil {
 		return err
 	}
-
+	//host, port, serverName, NamespaceId
+	host := nacoscfg.Nacos.Host
+	port := nacoscfg.Nacos.Port
+	serverName := nacoscfg.Nacos.ServerName
+	NamespaceId := nacoscfg.Nacos.NamespaceId
 	err = config.ClientNacos(NamespaceId, host, port)
 	if err != nil {
 		return err

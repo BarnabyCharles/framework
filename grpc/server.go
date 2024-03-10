@@ -30,7 +30,7 @@ func RegisterGRPC(serverName string, register func(s *grpc.Server), cert, key st
 	}
 	log.Println("grpc端口==================", AppConfig)
 
-	AppConfig.Host = getHostIp()
+	//AppConfig.Host = getHostIp()
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", AppConfig.Host, AppConfig.Port))
 	if err != nil {
 		log.Panicf("failed to listen%v", err)
