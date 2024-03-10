@@ -42,13 +42,14 @@ func ConsulClient(serverName string) error {
 
 func AgentService(serverName, Address string, Port int) error {
 	Srvid = uuid.New().String()
+	Address = getHostIp()
+
 	check := &api.AgentServiceCheck{
 		Interval:                       "5s",
 		Timeout:                        "5s",
 		GRPC:                           fmt.Sprintf("%s:%d", Address, Port),
 		DeregisterCriticalServiceAfter: "10s",
 	}
-	Address = getHostIp()
 	err := ConsulCli.Agent().ServiceRegister(&api.AgentServiceRegistration{
 		ID:      Srvid,
 		Name:    serverName,
