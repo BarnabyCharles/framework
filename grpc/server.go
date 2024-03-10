@@ -30,7 +30,6 @@ func RegisterGRPC(serverName string, register func(s *grpc.Server), cert, key st
 	}
 	log.Println("grpc端口==================", AppConfig)
 
-	AppConfig.Host = getHostIp()
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", AppConfig.Host, AppConfig.Port))
 	if err != nil {
 		log.Panicf("failed to listen%v", err)
@@ -83,21 +82,4 @@ func GetFreePort() (int, error) {
 	}
 	defer l.Close()
 	return l.Addr().(*net.TCPAddr).Port, nil
-}
-func getHostIp() string {
-	addrList, err := net.InterfaceAddrs()
-	if err != nil {
-		fmt.Println("get current host ip err: ", err)
-		return ""
-	}
-	var ip string
-	for _, address := range addrList {
-		if ipNet, ok := address.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
-			if ipNet.IP.To4() != nil {
-				ip = ipNet.IP.String()
-				break
-			}
-		}
-	}
-	return ip
 }
